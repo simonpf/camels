@@ -232,7 +232,7 @@ class StreamflowDataset:
         """
         data = self.data[start : end]
 
-        f, axs = plt.subplots(4, 1, figsize=(10, 15))
+        f, axs = plt.subplots(4, 1, figsize=(12, 12))
         c1 = "navy"
         c2 = "firebrick"
 
@@ -301,7 +301,7 @@ class StreamflowDataset:
 
         ax = axs[3]
         ax.plot(data["streamflow [ft^3/s]"], c=c1)
-        ax.set_ylabel("Streamflow [$m^3$]")
+        ax.set_ylabel("Streamflow [$ft^3\ s^{-1}$]")
         ax.set_title("(d) Output: Streamflow", loc="left")
         ax.set_xlim([data.index[0], data.index[-1]])
 
