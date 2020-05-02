@@ -49,15 +49,8 @@ class Streamflow(StreamflowDataset, Dataset):
             Tuple x, y of torch tensors corresponding to the time series of forcings x
             and corresponding stream flow y.
         """
-
-        if i >= len(self):
-            return ValueError()
-
-        i = i * 10
-        i_start = i
-        i_end = i + self.sequence_length
-        x = self.x[i_start : i_end, :]
-        y = self.y[i_start : i_end, :]
+        x = self.x[i]
+        y = self.y[i]
         return x, y
 
     def get_range(self, start, end):
