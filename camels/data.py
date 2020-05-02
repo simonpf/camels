@@ -152,11 +152,11 @@ class StreamflowDataset:
         elif mode == "validation":
             self.data = data.loc[(data.index >= datetime(2006, 1, 1, hour=0))
                                  & (data.index < datetime(2010, 1, 1, hour=0))]
-        elif mode == "testing":
+        elif mode in ["test", "testing"]:
             self.data = data.loc[data.index >= datetime(2010, 1, 1, hour=0)]
         else:
             raise ValueError("The 'mode' argument should be one of 'training', "
-                             "'validation' or 'testing'.")
+                             "'validation' or 'test'.")
 
         self.sequence_length = sequence_length
 
@@ -232,7 +232,7 @@ class StreamflowDataset:
         """
         data = self.data[start : end]
 
-        f, axs = plt.subplots(4, 1, figsize=(12, 12))
+        f, axs = plt.subplots(4, 1, figsize=(8, 8))
         c1 = "navy"
         c2 = "firebrick"
 
@@ -317,7 +317,8 @@ class DataIterator:
     def __init__(self,
                  data,
                  indices,
-                 batch_size):
+                 batch_size,
+                 batch_first=False):
         """
         Args:
             data: DataLoader object containing the data to provide in x and
@@ -327,13 +328,18 @@ class DataIterator:
         """
         self.batch_size = batch_size
         self.indices = indices
+        self.batch_first=batch_first
 
     def next(self):
         if self.indices.size > self.batch_size:
             indices = self.indices[:self.batch_size]
             self.indices = self.indices[self.batch_size:]
-            x = data.x[indices]
-            y = data.y[indices]
+            x = data.x[:, indices, :]
+            y = data.y[:, indices, :]
+            if self.batch_first:
+                x = x.transpose(0, 1)
+                y = y.transpose(0, 1)
+
             return x, y
         else:
             raise StopIteration
@@ -352,12 +358,20 @@ class DataLoader:
         self.indices = np.arange(len(data))
         self.data = data
 
+        self.x = torch.zeros(data.sequence_length, len(data), len(data.inputs))
+        self.y = torch.zeros(data.sequence_length, len(data), 1)
+        for i in range(len(data)):
+            sample = torch.tensor(data[i]).float()
+            x[:, i, :] = sample[0]
+            y[:, i, :] = sample[1]
+
+
     def __iter__(self):
         if self.shuffle:
             indices = np.random.permutation(self.indices)
         else:
             indices = self.indices
-        return DataIterator(self.data,
+        return DataIterator(self,
                             indices,
                             self.batch_size)
 

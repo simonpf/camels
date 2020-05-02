@@ -14,7 +14,7 @@ def plot_overview():
     tiler = Stamen("terrain")
     mercator = tiler.crs
 
-    f = plt.figure(figsize = (8, 5))
+    f = plt.figure(figsize = (6, 4))
     gs = GridSpec(1, 2, width_ratios=[1.0, 0.03])
 
     ax = plt.subplot(gs[0], projection=mercator)
@@ -75,7 +75,7 @@ def plot_basin(gauge_id,
     tiler = Stamen("terrain")
     mercator = tiler.crs
 
-    f = plt.figure(figsize = (12, 7))
+    f = plt.figure(figsize = (6, 4))
     gs = GridSpec(1, 1)
 
     ax = plt.subplot(gs[0], projection=mercator)
@@ -90,8 +90,8 @@ def plot_basin(gauge_id,
     ax.set_xlabel("Longitude")
     ax.set_ylabel("Latitude")
 
-    xticks = np.arange(lon_min + 0.05, lon_max , 0.1)
-    yticks = np.arange(lat_min + 0.05, lat_max, 0.1)
+    xticks = np.arange(lon_min + 0.025, lon_max , 0.05)
+    yticks = np.arange(lat_min + 0.025, lat_max, 0.05)
     ax.set_xticks(xticks, crs=ccrs.PlateCarree())
     ax.set_yticks(yticks, crs=ccrs.PlateCarree())
     lon_formatter = LongitudeFormatter(zero_direction_label=True)
@@ -100,7 +100,7 @@ def plot_basin(gauge_id,
     ax.yaxis.set_major_formatter(lat_formatter)
 
     img=ax.scatter([lon], [lat], transform=ccrs.PlateCarree(),
-                   c="k", marker="x", s=30, label="Gauge location")
+                   c="k", marker="x", s=50, label="Gauge location")
     ax.legend()
 
     plt.show()
