@@ -100,7 +100,7 @@ def plot_basin(gauge_id,
     ax.yaxis.set_major_formatter(lat_formatter)
 
     img=ax.scatter([lon], [lat], transform=ccrs.PlateCarree(),
-                   c="k", marker="x", s=10, label="Gauge location")
+                   c="k", marker="x", s=30, label="Gauge location")
     ax.legend()
 
     plt.show()
