@@ -32,7 +32,7 @@ class Streamflow(StreamflowDataset, Dataset):
         for i in range(len(self)):
             sample = StreamflowDataset.__getitem__(self, i)
             self.x[:, i, :] = torch.tensor(sample[0]).float()
-            self.y[:, i, :] = torch.tensor(samples[1].float()
+            self.y[:, i, :] = torch.tensor(sample[1]).float()
 
     def __getitem__(self, i):
         """
