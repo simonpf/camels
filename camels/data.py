@@ -358,20 +358,12 @@ class DataLoader:
         self.indices = np.arange(len(data))
         self.data = data
 
-        self.x = torch.zeros(data.sequence_length, len(data), len(data.inputs))
-        self.y = torch.zeros(data.sequence_length, len(data), 1)
-        for i in range(len(data)):
-            sample = torch.tensor(data[i]).float()
-            x[:, i, :] = sample[0]
-            y[:, i, :] = sample[1]
-
 
     def __iter__(self):
         if self.shuffle:
             indices = np.random.permutation(self.indices)
         else:
             indices = self.indices
-        return DataIterator(self,
+        return DataIterator(self.data,
                             indices,
                             self.batch_size)
-
