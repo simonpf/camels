@@ -1,4 +1,4 @@
-# Interface to CAMELS dataset
+# The CAMELS dataset
 
 This package provides an interface to the Catchment Attributes and Meteorology
 for Large-sample Studies (CAMELS) dataset. This package only provides simplified
@@ -10,3 +10,4 @@ article:
 large-sample watershed-scale hydrometeorological dataset for the contiguous USA.
 Boulder, CO: UCAR/NCAR](https://dx.doi.org/10.5065/D6MW2F4D)
 
+![Overview of gauges in dataset](misc/overview.png)

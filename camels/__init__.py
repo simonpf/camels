@@ -22,11 +22,22 @@ def plot_overview():
     ax.add_image(tiler, 5)
     #ax.coastlines('10m', lw=0.5)
 
+    ax.set_xlabel("Longitude")
+    ax.set_ylabel("Latitude")
+    xticks = np.arange(-135, -64, 10)
+    yticks = np.arange(25, 46, 10)
+    ax.set_xticks(xticks, crs=ccrs.PlateCarree())
+    ax.set_yticks(yticks, crs=ccrs.PlateCarree())
+    lon_formatter = LongitudeFormatter(zero_direction_label=True)
+    lat_formatter = LatitudeFormatter()
+    ax.xaxis.set_major_formatter(lon_formatter)
+    ax.yaxis.set_major_formatter(lat_formatter)
+
     img=ax.scatter(gauge_information["longitude"],
                    gauge_information["latitude"],
                    transform=ccrs.PlateCarree(),
                    c=gauge_information["gauge id"],
-                   s=1,
+                   s=2,
                    cmap="plasma")
     ax.set_title("Geographic locations of gauges in CAMELS dataset")
     asp = ax.get_aspect()
@@ -79,10 +90,8 @@ def plot_gauge(gauge_id,
     ax.set_xlabel("Longitude")
     ax.set_ylabel("Latitude")
 
-    print(lon_min, lon_max)
     xticks = np.arange(lon_min + 0.05, lon_max , 0.1)
     yticks = np.arange(lat_min + 0.05, lat_max, 0.1)
-    print(xticks)
     ax.set_xticks(xticks, crs=ccrs.PlateCarree())
     ax.set_yticks(yticks, crs=ccrs.PlateCarree())
     lon_formatter = LongitudeFormatter(zero_direction_label=True)
