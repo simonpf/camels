@@ -27,9 +27,9 @@ class Streamflow(StreamflowDataset, Dataset):
                                    inputs=inputs)
         Dataset.__init__(self)
 
-        self.x = torch.tensor(((self.data - self.mean) / self.std)[self.inputs].to_numpy(),
+        self.x = torch.tensor(((self.data - self.means) / self.stds)[self.inputs].to_numpy(),
                               dtype=torch.float)
-        self.y = torch.tensor(((self.data - self.mean) / self.std)[self.outputs].to_numpy(),
+        self.y = torch.tensor(((self.data - self.means) / self.stds)[self.outputs].to_numpy(),
                               dtype=torch.float)
 
     def __getitem__(self, i):
