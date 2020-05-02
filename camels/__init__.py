@@ -50,9 +50,9 @@ def plot_overview():
     cb.update_ticks()
     plt.show()
 
-def plot_gauge(gauge_id,
-               dlat=0.1,
-               dlon=0.2,
+def plot_basin(gauge_id,
+               dlat=0.05,
+               dlon=0.1,
                tile_level=12):
     """
     Plots location of gauge and surrounding territory.
@@ -75,7 +75,7 @@ def plot_gauge(gauge_id,
     tiler = Stamen("terrain")
     mercator = tiler.crs
 
-    f = plt.figure(figsize = (8, 5))
+    f = plt.figure(figsize = (12, 7))
     gs = GridSpec(1, 1)
 
     ax = plt.subplot(gs[0], projection=mercator)
