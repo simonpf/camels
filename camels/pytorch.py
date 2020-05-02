@@ -30,9 +30,9 @@ class Streamflow(StreamflowDataset, Dataset):
         self.x = torch.zeros(self.sequence_length, len(self), len(self.inputs))
         self.y = torch.zeros(self.sequence_length, len(self), 1)
         for i in range(len(self)):
-            sample = self[i]
+            sample = StreamflowDataset.__getitem__(self, i)
             self.x[:, i, :] = torch.tensor(sample[0]).float()
-            self.y[:, i, :] = torch.tensor(sample[1]).float()
+            self.y[:, i, :] = torch.tensor(samples[1].float()
 
     def __getitem__(self, i):
         """
