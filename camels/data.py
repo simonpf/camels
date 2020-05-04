@@ -4,7 +4,7 @@ baseclass for datasets of streamflow data.
 """
 from appdirs import AppDirs
 from urllib import request
-from datetime import datetime
+from datetime import datetime, timedelta
 import shutil
 import pandas as pd
 import numpy as np
@@ -119,7 +119,8 @@ class StreamflowDataset:
     def __init__(self,
                  gauge_id,
                  mode,
-                 sequence_length=300,
+                 sequence_length=200,
+                 stride=100,
                  inputs=default_inputs):
         """
 
@@ -159,6 +160,7 @@ class StreamflowDataset:
                              "'validation' or 'test'.")
 
         self.sequence_length = sequence_length
+        self.stride = stride
 
     def __repr__(self):
         return "Streamflow {} dataset for gauge {}".format(self.mode, self.gauge_id)
@@ -175,7 +177,7 @@ class StreamflowDataset:
         Returns:
             Number of samples in the dataset.
         """
-        return (len(self.data) - self.sequence_length) // 10
+        return (len(self.data) - self.sequence_length) // self.stride
 
     def __getitem__(self, i):
         """
@@ -183,8 +185,8 @@ class StreamflowDataset:
 
         A sample in the dataset is defined a sequence of length :code:`sequence_length` of
         forcings and corresponding streamflow. Elements are accessed in temporal order
-        and a strid of 10. That means dataset[0] will return a sequence starting a the first
-        day of the data, while dataset[1] will return a sequence starting a the 10th day
+        and the given stride. That means dataset[0] will return a sequence starting a the first
+        day of the data, while dataset[1] will return a sequence starting a the :code:`stride`th day
         of the available data.
 
         Return:
@@ -193,17 +195,17 @@ class StreamflowDataset:
         if i >= len(self):
             return ValueError()
 
-        i = i * 10
+        i = i * self.stride
         i_start = i
         i_end = i + self.sequence_length
-        inputs = ["daylight", "precipitation", "solar_radiation", "t_max", "t_min", "vapor_pressure"]
-        outputs = ["streamflow [ft^3/s]"]
-        x = ((self.data[i_start : i_end] - self.means) / self.stds)[inputs].to_numpy()
-        y = ((self.data[i_start : i_end] - self.means) / self.stds)[outputs].to_numpy()
+        x = ((self.data[i_start : i_end] - self.means) / self.stds)[self.inputs].to_numpy()
+        y = ((self.data[i_start : i_end] - self.means) / self.stds)[self.outputs].to_numpy()
 
         return x, y
 
-    def get_range(self, start, end):
+    def get_range(self,
+                  start=None,
+                  end=None):
         """
         Returns time series of given range as sample.
 
@@ -211,11 +213,13 @@ class StreamflowDataset:
             Tuple (x, y) of numpy arrays containing forcings x and streamflow y for the
             given time range.
         """
+        if start is None:
+            start = self.data.index[0] - timedelta(1)
+        if end is None:
+            end = self.data.index[-1] + timedelta(1)
         data = self.data[start : end]
-        inputs = ["daylight", "precipitation", "solar_radiation", "t_max", "t_min", "vapor_pressure"]
-        outputs = ["streamflow"]
-        x = ((data - self.means) / self.stds)[inputs].to_numpy()
-        y = ((data - self.means) / self.stds)[outputs].to_numpy()
+        x = ((data - self.means) / self.stds)[self.inputs].to_numpy()
+        y = ((data - self.means) / self.stds)[self.outputs].to_numpy()
 
         return x, y
 
@@ -310,60 +314,54 @@ class StreamflowDataset:
         plt.tight_layout()
         plt.show()
 
-class DataIterator:
-    """
-    General data iterator providing access to sample batches.
-    """
-    def __init__(self,
-                 data,
-                 indices,
-                 batch_size,
-                 batch_first=False):
-        """
-        Args:
-            data: DataLoader object containing the data to provide in x and
-                y attributes.
-            indices: The indices of the samples to load into batches.
-            batch_size: The size of the batches to provide.
-        """
-        self.batch_size = batch_size
-        self.indices = indices
-        self.batch_first=batch_first
-
-    def next(self):
-        if self.indices.size > self.batch_size:
-            indices = self.indices[:self.batch_size]
-            self.indices = self.indices[self.batch_size:]
-            x = data.x[:, indices, :]
-            y = data.y[:, indices, :]
-            if self.batch_first:
-                x = x.transpose(0, 1)
-                y = y.transpose(0, 1)
-
-            return x, y
-        else:
-            raise StopIteration
-
 class DataLoader:
     """
-    General DataLoader object allowing to iterate over 
-
+    General DataLoader object providing access to batched sequences of
+    streamflow data.
     """
     def __init__(self,
                  data,
                  batch_size=8,
+                 batch_first=False,
                  shuffle=True):
+        """
+        data: The dataset object containing the training sequences as x and
+            y attributes.
+        batch_size: The batch size of the batches to provide.
+        shuffle: Whether or not to shuffle elements in dataloader.
+        """
         self.batch_size = batch_size
+        self.batch_first = batch_first
         self.shuffle = True
         self.indices = np.arange(len(data))
         self.data = data
 
+    def __len__(self):
+        return len(self.indices) // self.batch_size
 
     def __iter__(self):
+        """
+        Return iterate over batched in data.
+
+        """
         if self.shuffle:
-            indices = np.random.permutation(self.indices)
+            self.indices = np.random.permutation(self.indices)
         else:
-            indices = self.indices
-        return DataIterator(self.data,
-                            indices,
-                            self.batch_size)
+            self.indices = self.indices
+        self.counter = 0
+        return self
+
+    def __next__(self):
+        self.counter += 1
+        if self.counter * self.batch_size < self.indices.size:
+            i_start = self.batch_size * (self.counter - 1)
+            i_end = self.batch_size * self.counter
+            indices = self.indices[i_start : i_end]
+            x = self.data.x[:, indices, :]
+            y = self.data.y[:, indices, :]
+            if self.batch_first:
+                x = x.transpose(0, 1)
+                y = y.transpose(0, 1)
+            return x, y
+        else:
+            raise StopIteration

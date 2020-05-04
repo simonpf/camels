@@ -14,7 +14,7 @@ def plot_overview():
     tiler = Stamen("terrain")
     mercator = tiler.crs
 
-    f = plt.figure(figsize = (6, 4))
+    f = plt.figure(figsize = (8, 6))
     gs = GridSpec(1, 2, width_ratios=[1.0, 0.03])
 
     ax = plt.subplot(gs[0], projection=mercator)
@@ -75,7 +75,7 @@ def plot_basin(gauge_id,
     tiler = Stamen("terrain")
     mercator = tiler.crs
 
-    f = plt.figure(figsize = (6, 4))
+    f = plt.figure(figsize = (8, 6))
     gs = GridSpec(1, 1)
 
     ax = plt.subplot(gs[0], projection=mercator)

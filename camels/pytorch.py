@@ -7,7 +7,6 @@ from torch import nn
 from torch.utils.data import Dataset
 from camels.data import (StreamflowDataset,
                          DataLoader,
-                         DataIterator,
                          default_inputs)
 
 class Streamflow(StreamflowDataset, Dataset):
@@ -18,12 +17,14 @@ class Streamflow(StreamflowDataset, Dataset):
     def __init__(self,
                  gauge_id,
                  mode,
-                 sequence_length=300,
+                 sequence_length=400,
+                 stride=40,
                  inputs=default_inputs):
         StreamflowDataset.__init__(self,
                                    gauge_id,
                                    mode,
                                    sequence_length=sequence_length,
+                                   stride=stride,
                                    inputs=inputs)
         Dataset.__init__(self)
 
@@ -49,11 +50,13 @@ class Streamflow(StreamflowDataset, Dataset):
             Tuple x, y of torch tensors corresponding to the time series of forcings x
             and corresponding stream flow y.
         """
-        x = self.x[i]
-        y = self.y[i]
+        x = self.x[:, i]
+        y = self.y[:, i]
         return x, y
 
-    def get_range(self, start, end):
+    def get_range(self,
+                  start=None,
+                  end=None):
         """
         Returns time series of given range as sample.
 
@@ -63,7 +66,9 @@ class Streamflow(StreamflowDataset, Dataset):
         """
         x, y = StreamflowDataset.get_range(self, start, end)
         x = torch.tensor(x, dtype=torch.float)
+        x = x.unsqueeze(dim=0)
         y = torch.tensor(y, dtype=torch.float)
+        y = y.unsqueeze(dim=0)
         return x, y
 
     def data_loader(self,
