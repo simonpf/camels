@@ -1,16 +1,17 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 from camels.data import gauge_information, gauge_ids
-from cartopy.io.img_tiles import Stamen
-from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
-import cartopy.crs as ccrs
 
 def plot_overview():
     """
     Plots overview over geographic locations of gauges available in
     the dataset.
     """
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.gridspec import GridSpec
+    from cartopy.io.img_tiles import Stamen
+    from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+    import cartopy.crs as ccrs
+
     tiler = Stamen("terrain")
     mercator = tiler.crs
 
@@ -64,6 +65,13 @@ def plot_basin(gauge_id,
         tile_level: The resolution level to use for the terrain
             in the background.
     """
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.gridspec import GridSpec
+    from cartopy.io.img_tiles import Stamen
+    from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+    import cartopy.crs as ccrs
+
     if not gauge_id in gauge_ids:
         other = gauge_ids[np.argmin(np.abs(int(gauge_id) - gauge_ids))]
         raise ValueError("Gauge ID {} is not available from this dataset. The "
