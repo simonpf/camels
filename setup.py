@@ -14,7 +14,7 @@ setup(
     url='https://github.com/simonpf/camels',  # Optional
     author='Simon Pfreundschuh',  # Optional
     author_email='simon.pfreundschuh@chalmers.se',  # Optional
-    install_requires=["appdirs", "numpy", "pandas", "matplotlib", "pyprof", "geos", "cartopy"],
+    install_requires=["appdirs", "numpy", "pandas", "matplotlib", "pyproj", "geos", "cartopy"],
     packages=["camels"],
     python_requires='>=3.6',
     project_urls={  # Optional
