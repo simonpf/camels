@@ -1,4 +1,4 @@
-![Build status](https://travis-ci.com/simonpf/camels.svg?branch=master)
+![Build status](https://travis-ci.com/simonpf/camels.svg?branch=master) [![Build status](https://ci.appveyor.com/api/projects/status/e14q8e8x6449ne0g?svg=true)](https://ci.appveyor.com/project/simonpf/camels)
 
 # The CAMELS dataset
 
