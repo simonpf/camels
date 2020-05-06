@@ -1,4 +1,7 @@
 from camels.data import gauge_information, gauge_ids
+from urllib import request
+from tempfile import NamedTemporaryFile
+import shutil
 
 def plot_overview():
     """
@@ -68,47 +71,62 @@ def plot_basin(gauge_id,
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.gridspec import GridSpec
-    from cartopy.io.img_tiles import Stamen
-    from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
-    import cartopy.crs as ccrs
 
     if not gauge_id in gauge_ids:
         other = gauge_ids[np.argmin(np.abs(int(gauge_id) - gauge_ids))]
         raise ValueError("Gauge ID {} is not available from this dataset. The "
-                         "closest ID available is {}.".format(gauge_id, other))
+                        "closest ID available is {}.".format(gauge_id, other))
 
-    lat = float(gauge_information.loc[gauge_information["gauge id"] == gauge_id]["latitude"])
-    lon = float(gauge_information.loc[gauge_information["gauge id"] == gauge_id]["longitude"])
+    try:
+        from cartopy.io.img_tiles import Stamen
+        from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+        import cartopy.crs as ccrs
 
-    tiler = Stamen("terrain")
-    mercator = tiler.crs
+        lat = float(gauge_information.loc[gauge_information["gauge id"] == gauge_id]["latitude"])
+        lon = float(gauge_information.loc[gauge_information["gauge id"] == gauge_id]["longitude"])
 
-    f = plt.figure(figsize = (8, 6))
-    gs = GridSpec(1, 1)
+        tiler = Stamen("terrain")
+        mercator = tiler.crs
 
-    ax = plt.subplot(gs[0], projection=mercator)
+        f = plt.figure(figsize = (8, 6))
+        gs = GridSpec(1, 1)
 
-    lon_min = np.round(lon - dlon, decimals=1)
-    lon_max = np.round(lon + dlon, decimals=1)
-    lat_min = np.round(lat - dlat, decimals=1)
-    lat_max = np.round(lat + dlat, decimals=1)
-    ax.set_extent([lon_min, lon_max, lat_min, lat_max])
+        ax = plt.subplot(gs[0], projection=mercator)
 
-    ax.add_image(tiler, tile_level)
-    ax.set_xlabel("Longitude")
-    ax.set_ylabel("Latitude")
+        lon_min = lon - dlon
+        lon_max = lon + dlon
+        lat_min = lat - dlat
+        lat_max = lat + dlat
+        ax.set_extent([lon_min, lon_max, lat_min, lat_max])
 
-    xticks = np.arange(lon_min + 0.025, lon_max , 0.05)
-    yticks = np.arange(lat_min + 0.025, lat_max, 0.05)
-    ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-    ax.set_yticks(yticks, crs=ccrs.PlateCarree())
-    lon_formatter = LongitudeFormatter(zero_direction_label=True)
-    lat_formatter = LatitudeFormatter()
-    ax.xaxis.set_major_formatter(lon_formatter)
-    ax.yaxis.set_major_formatter(lat_formatter)
+        ax.add_image(tiler, tile_level)
+        ax.set_xlabel("Longitude")
+        ax.set_ylabel("Latitude")
 
-    img=ax.scatter([lon], [lat], transform=ccrs.PlateCarree(),
-                   c="k", marker="x", s=50, label="Gauge location")
-    ax.legend()
+        lon_min_r = np.round(lon - dlon, decimals=1)
+        lon_max_r = np.round(lon + dlon, decimals=1)
+        lat_min_r = np.round(lat - dlat, decimals=1)
+        lat_max_r = np.round(lat + dlat, decimals=1)
 
-    plt.show()
+        xticks = np.arange(lon_min, lon_max, 0.05)
+        yticks = np.arange(lat_min, lat_max, 0.05)
+        ax.set_xticks(xticks, crs=ccrs.PlateCarree())
+        ax.set_yticks(yticks, crs=ccrs.PlateCarree())
+        lon_formatter = LongitudeFormatter(zero_direction_label=True)
+        lat_formatter = LatitudeFormatter()
+        ax.xaxis.set_major_formatter(lon_formatter)
+        ax.yaxis.set_major_formatter(lat_formatter)
+
+        img=ax.scatter([lon], [lat], transform=ccrs.PlateCarree(),
+                    c="k", marker="x", s=50, label="Gauge location")
+        ax.legend()
+        plt.show()
+    except:
+        url = "http://spfrnd.de/datasets/camels/plots/{}.png".format(gauge_id)
+        with request.urlopen(url) as response:
+            with NamedTemporaryFile() as f:
+                shutil.copyfileobj(response, f)
+                img = plt.imread(f.name)
+                plt.imshow(img)
+                plt.gca().set_axis_off()
+        plt.show()

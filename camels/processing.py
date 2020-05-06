@@ -122,4 +122,21 @@ def convert_to_binary(base_path,
         data = read_streamflow_file(f)
         data.to_pickle(os.path.join(streamflow_folder, name + ".pckl"))
 
+def generate_images(output_path):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    from camels import plot_basin
+    from camels.data import gauge_ids
+    output_path = os.path.expanduser(output_path)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+    matplotlib.use("Agg")
+    for i in tqdm(gauge_ids):
+        plot_basin(i)
+        output_file = os.path.join(output_path, "{}.png".format(i))
+        plt.savefig(output_file, bbox_inches="tight", dpi=300)
+        plt.clf()
+        plt.close()
+
 #convert_to_binary("~/Downloads/basin_dataset_public_v1p2/", "~/src/camels/data")
+#generate_images("~/src/camels/data/plots")
