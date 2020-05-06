@@ -51,14 +51,12 @@ def plot_overview():
         cb.formatter.set_powerlimits((-10, 20))
         cb.update_ticks()
         plt.tight_layout()
-        plt.show()
 
     except:
         url = "http://spfrnd.de/datasets/camels/overview.png"
         img = plt.imread(url)
         plt.imshow(img)
         plt.gca().set_axis_off()
-        plt.show()
 
 def plot_basin(gauge_id,
                dlat=0.05,
@@ -122,10 +120,8 @@ def plot_basin(gauge_id,
         img=ax.scatter([lon], [lat], transform=ccrs.PlateCarree(),
                     c="k", marker="x", s=50, label="Gauge location")
         ax.legend()
-        plt.show()
     except:
         url = "http://spfrnd.de/datasets/camels/plots/{}.png".format(gauge_id)
         img = plt.imread(url)
         plt.imshow(img)
         plt.gca().set_axis_off()
-        plt.show()
