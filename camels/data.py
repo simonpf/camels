@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 import shutil
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 
 ################################################################################
@@ -234,6 +233,7 @@ class StreamflowDataset:
             end (datetime.datetime): Datetime object representing the end date
                 of the range to plot.
         """
+        import matplotlib.pyplot as plt
         data = self.data[start : end]
 
         f, axs = plt.subplots(4, 1, figsize=(8, 8))

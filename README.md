@@ -1,3 +1,5 @@
+![Build status](https://travis-ci.com/simonpf/camels.svg?branch=master)
+
 # The CAMELS dataset
 
 This package provides an interface to the Catchment Attributes and Meteorology
