@@ -134,9 +134,6 @@ def generate_images(output_path):
     for i in tqdm(gauge_ids):
         plot_basin(i)
         output_file = os.path.join(output_path, "{}.png".format(i))
-        plt.savefig(output_file, bbox_inches="tight", dpi=300)
+        plt.savefig(output_file, bbox_inches="tight", dpi=500)
         plt.clf()
         plt.close()
-
-#convert_to_binary("~/Downloads/basin_dataset_public_v1p2/", "~/src/camels/data")
-#generate_images("~/src/camels/data/plots")

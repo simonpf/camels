@@ -7,7 +7,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='camels',  # Required
-    version='0.0.2',  # Required
+    version='0.0.3',  # Required
     description='Interface to the CAMELS dataset.',
     long_description=long_description,
     long_description_content_type='text/markdown',  # Optional (see note above)
