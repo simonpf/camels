@@ -123,5 +123,6 @@ def plot_basin(gauge_id,
     except:
         url = "http://spfrnd.de/datasets/camels/plots/{}.png".format(gauge_id)
         img = plt.imread(url)
+        plt.figure(figsize=(3,2), dpi=300)
         plt.imshow(img)
         plt.gca().set_axis_off()

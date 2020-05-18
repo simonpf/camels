@@ -66,9 +66,9 @@ class Streamflow(StreamflowDataset, Dataset):
         """
         x, y = StreamflowDataset.get_range(self, start, end)
         x = torch.tensor(x, dtype=torch.float)
-        x = x.unsqueeze(dim=0)
+        x = x.unsqueeze(dim=1)
         y = torch.tensor(y, dtype=torch.float)
-        y = y.unsqueeze(dim=0)
+        y = y.unsqueeze(dim=1)
         return x, y
 
     def data_loader(self,
