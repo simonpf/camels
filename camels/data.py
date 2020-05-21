@@ -314,6 +314,12 @@ class StreamflowDataset:
         plt.tight_layout()
         plt.show()
 
+    def get_dates(self):
+        start = self.data.index[0] - timedelta(1)
+        end = self.data.index[-1] + timedelta(1)
+
+        return start, end
+
 class DataLoader:
     """
     General DataLoader object providing access to batched sequences of

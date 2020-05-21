@@ -84,3 +84,6 @@ class Streamflow(StreamflowDataset, Dataset):
         return DataLoader(self,
                           batch_size,
                           shuffle=shuffle)
+
+    def get_dates(self):
+        return super().get_dates()
