@@ -16,7 +16,7 @@ Boulder, CO: UCAR/NCAR](https://dx.doi.org/10.5065/D6MW2F4D)
 
 ### Pytorch
 
-```
+```python
 from camels.pytorch import Streamflow
 gauge_id = 13331500
 
@@ -26,4 +26,3 @@ test_data = Streamflow(gauge_id, "testing")
 ```
 
 ![Overview of gauges in dataset](misc/overview.png)
-
